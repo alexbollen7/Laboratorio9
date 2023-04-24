@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -14,7 +15,7 @@ namespace Laboratorio9
         static List<Registro> registros = new List<Registro>();
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Leer();
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -57,6 +58,28 @@ namespace Laboratorio9
             //con WriteAllText se escribe todo de un solo
             System.IO.File.WriteAllText(archivo, json);
         }
+        
+        private void Leer()
+        {
+            //Se crea una lista con la misma estructura que tienen los datos en el archivo
+            List<Registro> lista = new List<Registro>();
 
+            //El nombre del archivo a utilizar
+            string archivo = Server.MapPath("Datos.json");
+
+            //Se abre el archivo
+            StreamReader jsonStream = File.OpenText(archivo);
+
+            //Se Lee todo el contenido del archivo y el contenido leído se guarda en una variable cualquiera de tipo string.
+            //aquí no se necesitan ciclos pues el método ReadToEnd() lee todo el contenido de una sola vez.
+            string json = jsonStream.ReadToEnd();
+
+            //Se cierra el archivo
+            jsonStream.Close();
+
+            //Se deserializa (convierte) la cadena json guardada en la variable, a la estructura que tiene la lista a donde se van a cargar los datos
+            lista = JsonConvert.DeserializeObject<List<Registro>>(json);
+            registros = lista.ToList();
+        }
     }
 }
